@@ -21,3 +21,5 @@ if numpy.any([isinstance(x.op, T.Elemwise) for x in f.maker.fgraph.toposort()]):
     print('Used the cpu')
 else:
     print('Used the gpu')
+
+#http://blog.jobbole.com/67616/
