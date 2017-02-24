@@ -27,6 +27,7 @@ optimizer = tf.train.GradientDescentOptimizer(0.5)
 # 设置训练目标为损失函数最小化
 train = optimizer.minimize(loss)
 
+tf.assign
 # 初始化变量
 init = tf.global_variables_initializer()
 
