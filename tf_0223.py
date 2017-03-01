@@ -1,6 +1,7 @@
 #coding:utf-8
 import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
 '''
 已知方程 Wx+b=y
 给出100个x输入和对应的输出y
@@ -27,15 +28,13 @@ optimizer = tf.train.GradientDescentOptimizer(0.5)
 # 设置训练目标为损失函数最小化
 train = optimizer.minimize(loss)
 
-tf.assign
 # 初始化变量
 init = tf.global_variables_initializer()
 
-# 启动会话/交互会话
-# sess = tf.Session()
-sess =tf.InteractiveSession()
+# 启动会话/交互会话(用于Ipython)
+sess = tf.Session()
+# sess =tf.InteractiveSession()
 sess.run(init)
-
 # 201迭代
 for step in range(201):
     sess.run(train)
