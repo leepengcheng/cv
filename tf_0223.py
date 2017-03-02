@@ -23,10 +23,11 @@ y = tf.matmul(W, x_data) + b
 
 # 建立损失函数->均方差函数
 loss = tf.reduce_mean(tf.square(y - y_data))
+loss_cross_entropy=-tf.reduce_sum(y_data*tf.log(y))
 # 设置训练优化器的学习率为0.5
-optimizer = tf.train.GradientDescentOptimizer(0.5)
+optimizer = tf.train.GradientDescentOptimizer(0.1)
 # 设置训练目标为损失函数最小化
-train = optimizer.minimize(loss)
+train = optimizer.minimize(loss_cross_entropy)
 
 # 初始化变量
 init = tf.global_variables_initializer()
@@ -38,6 +39,7 @@ sess.run(init)
 # 201迭代
 for step in range(201):
     sess.run(train)
-    if step % 20 == 0:
-        # 当前epoch的W 和 B值
-        print(step, sess.run(W), sess.run(b))
+    print("Loss: %-10d is %s\n"%(step,sess.run(loss_cross_entropy)))
+    # if step % 20 == 0:
+    #     # 当前epoch的W 和 B值
+    #     print(step, sess.run(W), sess.run(b))
