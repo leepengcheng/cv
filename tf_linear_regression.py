@@ -3,7 +3,8 @@ import numpy
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
+tf.nn.conv2d
+tf.nn.max_pool
 rng = numpy.random
 # Parameters
 learning_rate = 0.01
