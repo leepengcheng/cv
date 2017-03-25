@@ -1,15 +1,18 @@
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
-mnist = input_data.read_data_sets(r'D:\MyRepo\myml\data\mnist', one_hot=True)
+from time import clock
+mnist = input_data.read_data_sets('../data/mnist', one_hot=True)
 x = tf.placeholder("float", shape=[None, 784])
 y_ = tf.placeholder("float", shape=[None, 10])
 
+start=clock()
 
+#初始化生成权重值
 def weight_variable(shape):
     init = tf.truncated_normal(shape, stddev=0.1)
     return tf.Variable(init)
 
-
+#初始化生成偏置值
 def bias_variable(shape):
     init = tf.constant(0.1, shape=shape)
     return tf.Variable(init)
@@ -20,25 +23,27 @@ def conv2d(x, W):
     return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding="SAME")
 
 
-#最大池/采样层
+#最大池/采样层-卷积核大小2x2->步数2-2
 def max_pool_2x2(x):
     return tf.nn.max_pool(
         x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="SAME")
 
 
-#输入N*(28-28)
+#输入N*(28-28)x1通道
 x_image = tf.reshape(x, [-1, 28, 28, 1])
-#第一层卷积32*(28-28)
+
 W_conv1 = weight_variable([5, 5, 1, 32])
 b_conv1 = bias_variable([32])
 
+#第一层卷积32*(28-28)x1
 h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
-#最大池化32*(14-14)
+#最大池化32*(14-14)x1
 h_pool1 = max_pool_2x2(h_conv1)
 
-#第二层卷积32*(14-14)->64*(14-14)
+
 W_conv2 = weight_variable([5, 5, 32, 64])
 b_conv2 = bias_variable([64])
+#第二层卷积32*(14-14)->64*(14-14)
 h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
 #64*(14-14)->64*(7-7)
 h_pool2 = max_pool_2x2(h_conv2)
@@ -92,3 +97,6 @@ with tf.Session() as sess:
                 y_: mnist.test.labels,
                 keep_prob: 1.0
             }))
+
+end=clock()
+print("Total Cost:%s S"%(end-start))
