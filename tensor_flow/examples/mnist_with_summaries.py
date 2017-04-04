@@ -26,7 +26,7 @@ from __future__ import print_function
 
 import argparse
 import sys
-
+from random import random
 import tensorflow as tf
 
 from tensorflow.examples.tutorials.mnist import input_data
@@ -44,14 +44,14 @@ def train():
 
   # 创建多层网络
   # 创建层：输入层-名称
-  with tf.name_scope('输入层'):
-    x = tf.placeholder(tf.float32, [None, 784], name='输入图片')#输入图片
-    y_ = tf.placeholder(tf.float32, [None, 10], name='图片标签')#图片的标签
+  with tf.name_scope('Inputlayer'):
+    x = tf.placeholder(tf.float32, [None, 784], name='InputImage')#输入图片
+    y_ = tf.placeholder(tf.float32, [None, 10], name='InputImageLabel')#图片的标签
 
   #创建层:维度转换层
-  with tf.name_scope('维度转换层'):
+  with tf.name_scope('ReshapeImage'):
     image_shaped_input = tf.reshape(x, [-1, 28, 28, 1])
-    tf.summary.image('输入图片', image_shaped_input, 10) #创建图片数据汇总->最大显示10个
+    tf.summary.image('Image_Input', image_shaped_input, 10) #创建图片数据汇总->最大显示10个
 
   # We can't initialize these variables to 0 - the network will get stuck.
   def weight_variable(shape):
@@ -66,15 +66,15 @@ def train():
 
   def variable_summaries(var):
     """Attach a lot of summaries to a Tensor (for TensorBoard visualization)."""
-    with tf.name_scope('统计数据'):
+    with tf.name_scope('Summaries'):
       mean = tf.reduce_mean(var)
-      tf.summary.scalar('平均值', mean)
-      with tf.name_scope('标准差'):
+      tf.summary.scalar('Mean', mean)
+      with tf.name_scope('ScopeStddev'):
         stddev = tf.sqrt(tf.reduce_mean(tf.square(var - mean)))
-      tf.summary.scalar('标准差', stddev)
-      tf.summary.scalar('最大值', tf.reduce_max(var))
-      tf.summary.scalar('最小值', tf.reduce_min(var))
-      tf.summary.histogram('直方图', var)
+      tf.summary.scalar('Stddev', stddev)
+      tf.summary.scalar('Max', tf.reduce_max(var))
+      tf.summary.scalar('Min', tf.reduce_min(var))
+      tf.summary.histogram('Histogram_Var', var)
 
   def nn_layer(input_tensor, input_dim, output_dim, layer_name, act=tf.nn.relu):
     """Reusable code for making a simple neural net layer.
@@ -86,30 +86,30 @@ def train():
     # Adding a name scope ensures logical grouping of the layers in the graph.
     with tf.name_scope(layer_name):
       # This Variable will hold the state of the weights for the layer
-      with tf.name_scope('权重'):
+      with tf.name_scope('Weight'):
         weights = weight_variable([input_dim, output_dim])
         variable_summaries(weights)
-      with tf.name_scope('偏差'):
+      with tf.name_scope('Bias'):
         biases = bias_variable([output_dim])
         variable_summaries(biases)
-      with tf.name_scope('模型计算Wx*b'):
+      with tf.name_scope('WX_B'):
         preactivate = tf.matmul(input_tensor, weights) + biases
-        tf.summary.histogram('激活前', preactivate)
-      activations = act(preactivate, name='激活后')
-      tf.summary.histogram('激活后的值', activations)
+        tf.summary.histogram('Histogram_Preactivate', preactivate)
+      activations = act(preactivate, name='AfterAction')
+      tf.summary.histogram('Histogram_activations', activations)
       return activations
 
-  hidden1 = nn_layer(x, 784, 500, '层1')
+  hidden1 = nn_layer(x, 784, 500, 'Layer1')
 
-  with tf.name_scope('退出层'):
+  with tf.name_scope('Dropout'):
     keep_prob = tf.placeholder(tf.float32)
-    tf.summary.scalar('退出保持率', keep_prob)
+    tf.summary.scalar('DropProb', keep_prob)
     dropped = tf.nn.dropout(hidden1, keep_prob)
 
   # Do not apply softmax activation yet, see below.
-  y = nn_layer(dropped, 500, 10, 'layer2', act=tf.identity)
+  y = nn_layer(dropped, 500, 10, 'Layer2', act=tf.identity)
 
-  with tf.name_scope('损失函数-交叉熵'):
+  with tf.name_scope('Scope_Cross-entropy'):
     # The raw formulation of cross-entropy,
     #
     # tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(tf.softmax(y)),
@@ -121,22 +121,22 @@ def train():
     # raw outputs of the nn_layer above, and then average across
     # the batch.
     diff = tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y)
-    with tf.name_scope('交叉熵-平均值'):
+    with tf.name_scope('Scope_Cross-entropy-reducemean'):
       cross_entropy = tf.reduce_mean(diff)
-  tf.summary.scalar('交叉熵-平均值', cross_entropy)
+  tf.summary.scalar('Loss_CrossEntropy', cross_entropy)
 
-  with tf.name_scope('训练'):
+  with tf.name_scope('Scope_Train'):
     train_step = tf.train.AdamOptimizer(FLAGS.learning_rate).minimize(
         cross_entropy)
 
-  with tf.name_scope('准确率'):
-    with tf.name_scope('正确率计算'):
+  with tf.name_scope('Accuracy'):
+    with tf.name_scope('AccuracyArgmax'):
       correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-    with tf.name_scope('正确率'):
+    with tf.name_scope('AccuracyPercent'):
       accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-  tf.summary.scalar('正确率', accuracy)
+  tf.summary.scalar('Scalar_Accuracy', accuracy)
 
-  # 合并所有的统计数据并写入目录
+  # 合并图中统计数据,返回值为string 类型的tensor
   merged = tf.summary.merge_all()
   train_writer = tf.summary.FileWriter(FLAGS.log_dir + '/train', sess.graph)#训练输出 流
   test_writer = tf.summary.FileWriter(FLAGS.log_dir + '/test') #测试输出流
@@ -151,6 +151,7 @@ def train():
     if train or FLAGS.fake_data:
       xs, ys = mnist.train.next_batch(100, fake_data=FLAGS.fake_data)
       k = FLAGS.dropout
+      # k=random()
     else:
       xs, ys = mnist.test.images, mnist.test.labels
       k = 1.0
@@ -159,7 +160,7 @@ def train():
   for i in range(FLAGS.max_steps):
     if i % 10 == 0:  # 每隔10步刷新统计和准确率
       summary, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
-      test_writer.add_summary(summary, i)#刷新统计
+      test_writer.add_summary(summary, i) #写出第N步的统计信息
       print('Accuracy at step %s: %s' % (i, acc))#输出准确率
     else:  # Record train set summaries, and train
       if i % 100 == 99:  # 每100步刷新状态信息
@@ -170,11 +171,11 @@ def train():
                               options=run_options,
                               run_metadata=run_metadata)
         train_writer.add_run_metadata(run_metadata, 'step%03d' % i)
-        train_writer.add_summary(summary, i)
+        train_writer.add_summary(summary, i) #写出第N步的统计信息
         print('Adding run metadata for', i)
       else:  # Record a summary
         summary, _ = sess.run([merged, train_step], feed_dict=feed_dict(True))
-        train_writer.add_summary(summary, i)
+        train_writer.add_summary(summary, i) #写出第N步的统计信息
   train_writer.close()
   test_writer.close()
 
@@ -187,6 +188,8 @@ def main(_):
 
 
 if __name__ == '__main__':
+  from os.path import dirname,join
+  path=dirname(dirname(dirname(__file__)))
   parser = argparse.ArgumentParser()
   parser.add_argument('--fake_data', nargs='?', const=True, type=bool,
                       default=False,
@@ -197,9 +200,9 @@ if __name__ == '__main__':
                       help='Initial learning rate')
   parser.add_argument('--dropout', type=float, default=0.6,
                       help='Keep probability for training dropout.')
-  parser.add_argument('--data_dir', type=str, default='../../data/mnist',
+  parser.add_argument('--data_dir', type=str, default=join(path,"data\mnist"),
                       help='Directory for storing input data')
-  parser.add_argument('--log_dir', type=str, default='../../data/summary',
+  parser.add_argument('--log_dir', type=str, default=join(path,"data\summary"),
                       help='Summaries log directory')
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
