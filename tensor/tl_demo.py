@@ -41,25 +41,26 @@ train_op = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999,
 tl.layers.initialize_global_variables(sess)
 
 # 列出模型信息
-network.print_params()
-network.print_layers()
+# network.print_params()
+# network.print_layers()
 
-npz_file=r'F:\MyGitRepository\myml\model.npz'
-if  os.path.exists(npz_file):
-    # 加载模型参数
-    load_paras=tl.files.load_npz(name=npz_file)
-    # 载入模型参数
-    tl.files.assign_params(sess,load_paras,network)
-    # 加载npz中的模型参数然后载入到会话
-    # tl.files.load_and_assign_npz(sess,name=npz_file,network=network)
-else:
-    # 训练模型
-    tl.utils.fit(sess, network, train_op, cost, X_train, y_train, x, y_,
-                acc=acc, batch_size=500, n_epoch=500, print_freq=5,
-                X_val=X_val, y_val=y_val, eval_train=False)
-    # 把模型保存成 .npz 文件
-    tl.files.save_npz(network.all_params , name='model.npz')
-# 评估模型
-tl.utils.test(sess, network, acc, X_test, y_test, x, y_, batch_size=None, cost=cost)
-# 关闭会话
-sess.close()
+# npz_file=r'F:\MyGitRepository\myml\model.npz'
+# if  os.path.exists(npz_file):
+#     # 加载模型参数
+#     load_paras=tl.files.load_npz(name=npz_file)
+#     # 载入模型参数
+#     tl.files.assign_params(sess,load_paras,network)
+#     # 加载npz中的模型参数然后载入到会话
+#     # tl.files.load_and_assign_npz(sess,name=npz_file,network=network)
+# else:
+#     # 训练模型
+#     tl.utils.fit(sess, network, train_op, cost, X_train, y_train, x, y_,
+#                 acc=acc, batch_size=500, n_epoch=500, print_freq=5,
+#                 X_val=X_val, y_val=y_val, eval_train=False)
+#     # 把模型保存成 .npz 文件
+#     tl.files.save_npz(network.all_params , name='model.npz')
+# # 评估模型
+# tl.utils.test(sess, network, acc, X_test, y_test, x, y_, batch_size=None, cost=cost)
+# # 关闭会话
+# sess.close()
+tl.files.npz_to_W_pdf(path=r"F:\MyGitRepository\myml\")
