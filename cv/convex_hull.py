@@ -21,3 +21,9 @@ sns.plt.scatter(pts[:-1,0],pts[:-1,1])  #散点图vec
 sns.plt.plot(pts[:,0],pts[:,1],"k--")        #折线图
 sns.plt.show() 
 
+
+
+
+
+
+

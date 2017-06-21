@@ -8,16 +8,6 @@
 # Q是W的协方差，R是V的协方差，X(k|k-1)是估计值；X(k|k)是X(k|k-1)的最优估计值，即滤波估计值；
 # P(k|k-1)是估计值误差方差矩阵，P(k|k)是滤波误差方差矩阵
 # 这里设置A=1，H=1，BU=0,W=0
-# -*- coding=utf-8 -*-
-# Kalman filter example demo in Python
-
-# A Python implementation of the example given in pages 11-15 of "An
-# Introduction to the Kalman Filter" by Greg Welch and Gary Bishop,
-# University of North Carolina at Chapel Hill, Department of Computer
-# Science, TR 95-041,
-# http://www.cs.unc.edu/~welch/kalman/kalmanIntro.html
-
-# by Andrew D. Straw
 #coding:utf-8
 import numpy
 import matplotlib.pyplot as plt
