@@ -32,8 +32,8 @@ def filter_matches_2(matches,threhold=30):
 cv2.ocl.setUseOpenCL(False) #关闭OPENCL
 NFEATURES=500  #抽取的特征数
 
-img1=cv2.imread(r"F:\slambook-master\ch7\1.png")
-img2=cv2.imread(r"F:\slambook-master\ch7\2.png")
+img1=cv2.imread(r"H:\MySlam\Slambook\ch7\1.png")
+img2=cv2.imread(r"H:\MySlam\Slambook\ch7\2.png")
 detector=cv2.ORB_create(NFEATURES)  
 kpts1, desc1 = detector.detectAndCompute(img1, None)
 kpts2, desc2 = detector.detectAndCompute(img2, None)
