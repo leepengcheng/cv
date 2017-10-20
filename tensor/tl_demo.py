@@ -2,11 +2,15 @@ import tensorflow as tf
 import tensorlayer as tl
 import os
 
+
+project_path=os.path.dirname(os.path.dirname(__file__))
+
+mnist_path=os.path.join(project_path,"data\mnist")
 sess = tf.InteractiveSession()
 
 # 准备数据
 X_train, y_train, X_val, y_val, X_test, y_test = \
-                                tl.files.load_mnist_dataset(shape=(-1,784),path=r"F:\MyGitRepository\myml\data\mnist")
+                                tl.files.load_mnist_dataset(shape=(-1,784),path=mnist_path)
 
 # 定义 placeholder
 x = tf.placeholder(tf.float32, shape=[None, 784], name='x')
@@ -41,26 +45,29 @@ train_op = tf.train.AdamOptimizer(learning_rate=0.0001, beta1=0.9, beta2=0.999,
 tl.layers.initialize_global_variables(sess)
 
 # 列出模型信息
-# network.print_params()
-# network.print_layers()
+network.print_params()
+network.print_layers()
 
-# npz_file=r'F:\MyGitRepository\myml\model.npz'
-# if  os.path.exists(npz_file):
-#     # 加载模型参数
-#     load_paras=tl.files.load_npz(name=npz_file)
-#     # 载入模型参数
-#     tl.files.assign_params(sess,load_paras,network)
-#     # 加载npz中的模型参数然后载入到会话
-#     # tl.files.load_and_assign_npz(sess,name=npz_file,network=network)
-# else:
-#     # 训练模型
-#     tl.utils.fit(sess, network, train_op, cost, X_train, y_train, x, y_,
-#                 acc=acc, batch_size=500, n_epoch=500, print_freq=5,
-#                 X_val=X_val, y_val=y_val, eval_train=False)
-#     # 把模型保存成 .npz 文件
-#     tl.files.save_npz(network.all_params , name='model.npz')
-# # 评估模型
-# tl.utils.test(sess, network, acc, X_test, y_test, x, y_, batch_size=None, cost=cost)
-# # 关闭会话
-# sess.close()
-tl.files.npz_to_W_pdf(path=r"F:\MyGitRepository\myml\")
+npz_file=os.path.join(project_path,"tensor\tl_demo.npz")
+if  os.path.exists(npz_file):
+    print("Detecting npz model file")
+    # 加载模型参数
+    load_paras=tl.files.load_npz(name=npz_file)
+    # 载入模型参数
+    tl.files.assign_params(sess,load_paras,network)
+    # 加载npz中的模型参数然后载入到会话
+    tl.files.load_and_assign_npz(sess,name=npz_file,network=network)
+else:
+    # 训练模型
+    tl.utils.fit(sess, network, train_op, cost, X_train, y_train, x, y_,
+                acc=acc, batch_size=500, n_epoch=500, print_freq=5,
+                X_val=X_val, y_val=y_val, eval_train=False,tensorboard=True)
+    # 把模型保存成 .npz 文件
+    tl.files.save_npz(network.all_params , name='model.npz')
+# 评估模型
+tl.utils.test(sess, network, acc, X_test, y_test, x, y_, batch_size=None, cost=cost)
+# 关闭会话
+sess.close()
+
+pdf_path=os.path.join(project_path,"tensor")
+tl.files.npz_to_W_pdf(path=pdf_path)
