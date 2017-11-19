@@ -9,7 +9,7 @@ ix, iy = -1, -1
 w, h = -1, -1
 count = 0
 
-cv2.CAP_PROP_FRAME_COUNT
+# cv2.CAP_PROP_FRAME_COUNT
 def GetFrame(video):
     """
     GetFrame 做视频帧读取，同时转换视频帧为HSV图
