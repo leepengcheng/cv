@@ -3,3 +3,4 @@ data/
 *.npz
 logs/
 *.pyc
+*.pkl
