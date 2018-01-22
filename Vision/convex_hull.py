@@ -5,7 +5,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import scipy.spatial import Convex
 
 pts=np.random.randint(0,100,20).reshape([-1,2])#创建随机点
 pts=pts[pts[:,1].argsort()] #按照第2列-Y值排序
