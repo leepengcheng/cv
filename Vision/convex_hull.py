@@ -1,13 +1,18 @@
 #coding:utf-8
 '''
-凸包算法
+Convex Hull
 '''
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import scipy.spatial import Convex
+from scipy.spatial import ConvexHull
 
 pts=np.random.randint(0,100,20).reshape([-1,2])#创建随机点
+
+
+
+
+#所有点顺时针连接围成的区域
 pts=pts[pts[:,1].argsort()] #按照第2列-Y值排序
 p0=pts[0]         #取左下角的点作为起始点
 pts1=pts[1:,]     #其余的点
@@ -21,11 +26,15 @@ plt.xlabel("X")
 plt.ylabel("Y")
 plt.scatter(pts[:-1,0],pts[:-1,1])  #散点图vec
 plt.plot(pts[:,0],pts[:,1],"k--")        #折线图
+
+
+#convexhull凸包
+hull = ConvexHull(pts)
+for s in hull.simplices:
+    plt.plot(pts[s, 0], pts[s, 1], 'k-')
+
+
 plt.show() 
-
-
-
-
 
 
 
