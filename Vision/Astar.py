@@ -1,16 +1,13 @@
 ### 全局路径规划采用A*算法
+'''
 设起点的的坐标为start,终点坐标为goal  
 每个网格点到终点的权重评分
-```
 fScore=g_score+h_score
-```
 其中
 g_score：当前点到沿着start点A产生的路径到A点的移动耗费   
-h_score：不考虑不可通过区域，当前点到goal点B的理论移动耗费   
-```bash
+h_score：不考虑不可通过区域，当前点到goal点B的理论移动耗费  
 
-**伪代码实现**  
-
+*****************伪代码实现********************** 
 function A*(start, goal)
     //初始化关闭列表，已判定过的节点，进关闭列表。
     closedSet := {}
@@ -55,7 +52,7 @@ function A*(start, goal)
             cameFrom[neighbor] := current
             gScore[neighbor] := tentative_gScore
             fScore[neighbor] := gScore[neighbor] + heuristic_cost_estimate(neighbor, goal)
-
+            
     return failure
     //从caomeFrom中从goal点追溯到start点，取得路径节点。
 function reconstruct_path(cameFrom, current)
@@ -64,4 +61,4 @@ function reconstruct_path(cameFrom, current)
         current := cameFrom[current]
         total_path.append(current)
     return total_path
-```
+'''
